@@ -1,0 +1,26 @@
+{
+  "name": "USER",
+  "schema": {
+    "USER_INDEX": "INTEGER PRIMARY KEY AUTOINCREMENT",
+    "ID": "TEXT NOT NULL UNIQUE",
+    "PWD": "TEXT NOT NULL",
+    "NICKNAME": "TEXT NOT NULL",
+    "IS_DELETE": "INTEGER NOT NULL"
+  },
+  "relation": {
+  },
+  "map": {
+    "USER_INDEX": "index",
+    "ID": "id",
+    "PWD": "pwd",
+    "NICKNAME": "nickname",
+    "IS_DELETE": "is_delete"
+  },
+  "invert_map": {
+    "index": "USER_INDEX",
+    "id": "ID",
+    "pwd": "PWD",
+    "nickname": "NICKNAME",
+    "is_delete": "IS_DELETE"
+  }
+}

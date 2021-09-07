@@ -1,0 +1,31 @@
+{
+  "name": "REVIEW",
+  "schema": {
+    "REVIEW_INDEX": "INTEGER PRIMARY KEY AUTOINCREMENT",
+    "USER_INDEX": "INTEGER NOT NULL",
+    "BOOK_INDEX": "INTEGER NOT NULL",
+    "FILE_PATH": "TEXT NOT NULL",
+    "RANGE": "INTEGER NOT NULL",
+    "IS_DELETE": "INTEGER NOT NULL"
+  },
+  "relation": [
+    "FOREIGN KEY (USER_INDEX) REFERENCES USER (USER_INDEX)",
+    "FOREIGN KEY (BOOK_INDEX) REFERENCES BOOK (BOOK_INDEX)"
+  ],
+  "map": {
+    "REVIEW_INDEX": "index",
+    "USER_INDEX": "user_index",
+    "BOOK_INDEX": "book_index",
+    "FILE_PATH": "file_path",
+    "RANGE": "range",
+    "IS_DELETE": "is_delete"
+  },
+  "invert_map": {
+    "index": "REVIEW_INDEX",
+    "user_index": "USER_INDEX",
+    "book_index": "BOOK_INDEX",
+    "file_path": "FILE_PATH",
+    "range": "RANGE",
+    "is_delete": "IS_DELETE"
+  }
+}

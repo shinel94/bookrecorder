@@ -1,0 +1,32 @@
+{
+  "name": "BOOK",
+  "schema": {
+    "BOOK_INDEX": "INTEGER PRIMARY KEY AUTOINCREMENT",
+    "TITLE": "TEXT NOT NULL",
+    "AUTHOR": "TEXT NOT NULL",
+    "PUBLISHER": "TEXT NOT NULL",
+    "CATEGORY": "TEXT NOT NULL",
+    "ISBN": "INTEGER NOT NULL",
+    "IS_DELETE": "INTEGER NOT NULL"
+  },
+  "relation": {
+  },
+  "map": {
+    "BOOK_INDEX": "index",
+    "TITLE": "title",
+    "AUTHOR": "author",
+    "PUBLISHER": "publisher",
+    "CATEGORY": "category",
+    "ISBM": "isbn",
+    "IS_DELETE": "is_delete"
+  },
+  "invert_map": {
+    "index": "BOOK_INDEX",
+    "title": "TITLE",
+    "author": "AUTHOR",
+    "publisher": "PUBLISHER",
+    "category": "CATEGORY",
+    "isbn": "ISBN",
+    "is_delete": "IS_DELETE"
+  }
+}
