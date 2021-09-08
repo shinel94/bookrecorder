@@ -5,6 +5,7 @@
     "ID": "TEXT NOT NULL UNIQUE",
     "PWD": "TEXT NOT NULL",
     "NICKNAME": "TEXT NOT NULL",
+    "READ": "INTEGER NOT NULL",
     "IS_DELETE": "INTEGER NOT NULL"
   },
   "relation": {
@@ -14,6 +15,7 @@
     "ID": "id",
     "PWD": "pwd",
     "NICKNAME": "nickname",
+    "READ": "read",
     "IS_DELETE": "is_delete"
   },
   "invert_map": {
@@ -21,6 +23,7 @@
     "id": "ID",
     "pwd": "PWD",
     "nickname": "NICKNAME",
+    "read": "READ",
     "is_delete": "IS_DELETE"
   }
 }

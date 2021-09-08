@@ -7,6 +7,7 @@
     "PUBLISHER": "TEXT NOT NULL",
     "CATEGORY": "TEXT NOT NULL",
     "ISBN": "INTEGER NOT NULL",
+    "READ": "INTEGER NOT NULL",
     "IS_DELETE": "INTEGER NOT NULL"
   },
   "relation": {
@@ -17,7 +18,8 @@
     "AUTHOR": "author",
     "PUBLISHER": "publisher",
     "CATEGORY": "category",
-    "ISBM": "isbn",
+    "ISBN": "isbn",
+    "READ": "read",
     "IS_DELETE": "is_delete"
   },
   "invert_map": {
@@ -27,6 +29,7 @@
     "publisher": "PUBLISHER",
     "category": "CATEGORY",
     "isbn": "ISBN",
+    "read": "READ",
     "is_delete": "IS_DELETE"
   }
 }
