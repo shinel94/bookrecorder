@@ -128,4 +128,4 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-.src/cfg/apikey
+src/cfg/apikey.txt
