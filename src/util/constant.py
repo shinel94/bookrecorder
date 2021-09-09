@@ -14,5 +14,5 @@ G_REVIEW_TABLE_SCHEMA_FILE_PATH = f'{G_PROJECT_BASE_DIR}/src/cfg/table/review.js
 
 G_BOOK_CATEGORY_TAG = 'a:bok.category,r:1'
 
-G_NAVER_API_CLIENT_ID = "NVKD3EdPrr0T2MHG0aFH"  # 개발자센터에서 발급받은 Client ID 값
-G_NAVER_API_SECRET_KEY = "V6625qs8BD"  # 개발자센터에서 발급받은 Client Secret 값
+G_NAVER_API_CLIENT_ID = ""  # 개발자센터에서 발급받은 Client ID 값
+G_NAVER_API_SECRET_KEY = ""  # 개발자센터에서 발급받은 Client Secret 값
