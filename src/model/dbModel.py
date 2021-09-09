@@ -73,7 +73,7 @@ class DataBaseModel(metaclass=ABCMeta):
     @classmethod
     def get_index(cls):
         query = f"SELECT SEQ FROM SQLITE_SEQUENCE WHERE NAME=?"
-        return cls.db_adapter.select(query, [cls.schema['name']])[0][0] + 1
+        return int(cls.db_adapter.select(query, [cls.schema['name']])[0][0]) + 1
 
     @classmethod
     def _select(cls, **kwargs):
@@ -135,15 +135,17 @@ class User(DataBaseModel):
     schema_path = const.G_USER_TABLE_SCHEMA_FILE_PATH
     schema = load_json(schema_path)
 
-    def __init__(self, a_index, a_id, a_pwd, a_nickname, a_read, a_is_delete):
+    def __init__(self, a_index, a_id, a_pwd, a_token, a_nickname, a_read, a_is_delete):
         self.id = a_id
         self.pwd = a_pwd
+        self.token = a_token
         self.nickname = a_nickname
         self.read = a_read
         self.is_delete = a_is_delete
 
         self._prev_id = self.id
         self._prev_pwd = self.pwd
+        self._prev_token = self.token
         self._prev_nickname = self.nickname
         self._prev_read = self.read
         self._prev_is_delete = self.is_delete
@@ -157,6 +159,7 @@ class User(DataBaseModel):
     def update_property(self):
         self._prev_id = self.id
         self._prev_pwd = self.pwd
+        self._prev_token = self.token
         self._prev_nickname = self.nickname
         self._prev_read = self.read
         self._prev_is_delete = self.is_delete
@@ -295,45 +298,45 @@ class Review(DataBaseModel):
         return [cls.from_row(row) for row in selected_row]
 
 if __name__ == '__main__':
-    # print(User.create_table())
-    # print(Book.create_table())
-    # print(AppliedBook.create_table())
-    # print(Review.create_table())
-    # user1 = User(0, 'id', 'pwd', 'nick', 0, 0)
-    # user2 = User(1, 'id1', 'pwd', 'nick', 0, 0)
-    # user3 = User(2, 'id2', 'pwd', 'nick', 0, 0)
-    # user4 = User(3, 'id3', 'pwd', 'nick', 0, 0)
-    # user1.insert()
-    # user2.insert()
-    # user3.insert()
-    # user4.insert()
+    print(User.create_table())
+    print(Book.create_table())
+    print(AppliedBook.create_table())
+    print(Review.create_table())
+    user1 = User(0, 'id', 'pwd', "", 'nick', 0, 0)
+    user2 = User(1, 'id1', 'pwd', "", 'nick', 0, 0)
+    user3 = User(2, 'id2', 'pwd', "", 'nick', 0, 0)
+    user4 = User(3, 'id3', 'pwd', "", 'nick', 0, 0)
+    user1.insert()
+    user2.insert()
+    user3.insert()
+    user4.insert()
     print(User.select(is_delete=0))
     print(User.select(id='id1'))
-    # user: User = User.select(index=0)[0]
-    # user.is_delete = 1
-    # user.update()
+    user: User = User.select(index=0)[0]
+    user.is_delete = 1
+    user.update()
     print(User.select(index=0))
 
-    # book1 = Book(0, 'title', 'author', 'publisher', 'category', 1231231231, 1, 0)
-    # book2 = Book(1, 'title1', 'author1', 'publisher1', 'category1', 1231231232, 1, 0)
-    # book3 = Book(2, 'title2', 'author2', 'publisher2', 'category2', 1231231233, 1, 0)
-    # book1.insert()
-    # book2.insert()
-    # book3.insert()
+    book1 = Book(0, 'title', 'author', 'publisher', 'category', 1231231231, 1, 0)
+    book2 = Book(1, 'title1', 'author1', 'publisher1', 'category1', 1231231232, 1, 0)
+    book3 = Book(2, 'title2', 'author2', 'publisher2', 'category2', 1231231233, 1, 0)
+    book1.insert()
+    book2.insert()
+    book3.insert()
 
     print(Book.select(read=1))
 
-    # ap_book = AppliedBook(0, 0, 0, '2021-09-08', None, 5, 1, 0)
-    # ap_book.insert()
+    ap_book = AppliedBook(0, 0, 0, '2021-09-08', None, 5, 1, 0)
+    ap_book.insert()
     print(AppliedBook.select(rate=5))
 
-    # review = Review(0, 0, 0, 'test.json', 0, 0)
-    # review1 = Review(1, 0, 0, 'test1.json', 0, 0)
-    # review2 = Review(2, 0, 0, 'test2.json', 0, 0)
-    #
-    # review.insert()
-    # review1.insert()
-    # review2.insert()
+    review = Review(0, 0, 0, 'test.json', 0, 0)
+    review1 = Review(1, 0, 0, 'test1.json', 0, 0)
+    review2 = Review(2, 0, 0, 'test2.json', 0, 0)
+
+    review.insert()
+    review1.insert()
+    review2.insert()
 
     print(Review.select(range=0))
 
