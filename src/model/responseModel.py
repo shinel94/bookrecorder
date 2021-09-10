@@ -27,3 +27,20 @@ class BookSearchModel(BaseModel):
     id: str
     token: str
     keyword: str
+
+
+class BookApplyModel(BaseModel):
+    id: str
+    token: str
+    title: str
+    author: str
+    publisher: str
+    category: str
+    isbn: str
+    thumbnail: str
+
+
+class AppliedBookInfoModel(BaseModel):
+    id: str
+    token: str
+    applied_book_index: str

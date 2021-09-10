@@ -169,12 +169,13 @@ class Book(DataBaseModel):
     schema_path = const.G_BOOK_TABLE_SCHEMA_FILE_PATH
     schema = load_json(schema_path)
 
-    def __init__(self, a_index, a_title, a_author, a_publisher, a_category, a_isbn, a_read, a_is_delete):
+    def __init__(self, a_index, a_title, a_author, a_publisher, a_category, a_isbn, a_thumbnail, a_read, a_is_delete):
         self.title = a_title
         self.author = a_author
         self.publisher = a_publisher
         self.category = a_category
         self.isbn = a_isbn
+        self.thumbnail = a_thumbnail
         self.read = a_read
         self.is_delete = a_is_delete
 
@@ -182,6 +183,7 @@ class Book(DataBaseModel):
         self._prev_author = self.author
         self._prev_publisher = self.publisher
         self._prev_category = self.category
+        self._prev_thumbnail = self.thumbnail
         self._prev_isbn = self.isbn
         self._prev_read = self.read
         self._prev_is_delete = self.is_delete
@@ -193,12 +195,13 @@ class Book(DataBaseModel):
         self._prev_author = self.author
         self._prev_publisher = self.publisher
         self._prev_category = self.category
+        self._prev_thumbnail = self.thumbnail
         self._prev_isbn = self.isbn
         self._prev_read = self.read
         self._prev_is_delete = self.is_delete
 
     @classmethod
-    def select(cls, index=None, title=None, author=None, publisher=None, category=None, isbn=None, read=None, is_delete=None):
+    def select(cls, index=None, title=None, author=None, publisher=None, category=None, isbn=None, thumbnail=None, read=None, is_delete=None):
         selected_row = cls._select(
             index=index,
             title=title,
@@ -206,6 +209,7 @@ class Book(DataBaseModel):
             publisher=publisher,
             category=category,
             isbn=isbn,
+            thumbnail=thumbnail,
             read=read,
             is_delete=is_delete
         )
@@ -317,9 +321,9 @@ if __name__ == '__main__':
     user.update()
     print(User.select(index=0))
 
-    book1 = Book(0, 'title', 'author', 'publisher', 'category', 1231231231, 1, 0)
-    book2 = Book(1, 'title1', 'author1', 'publisher1', 'category1', 1231231232, 1, 0)
-    book3 = Book(2, 'title2', 'author2', 'publisher2', 'category2', 1231231233, 1, 0)
+    book1 = Book(0, 'title', 'author', 'publisher', 'category', 1231231231, 'thumbnail_url', 1, 0)
+    book2 = Book(1, 'title1', 'author1', 'publisher1', 'category1', 1231231232, 'thumbnail_url', 1, 0)
+    book3 = Book(2, 'title2', 'author2', 'publisher2', 'category2', 1231231233, 'thumbnail_url', 1, 0)
     book1.insert()
     book2.insert()
     book3.insert()

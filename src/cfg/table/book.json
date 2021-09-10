@@ -7,6 +7,7 @@
     "PUBLISHER": "TEXT NOT NULL",
     "CATEGORY": "TEXT NOT NULL",
     "ISBN": "INTEGER NOT NULL",
+    "THUMBNAIL": "TEXT NOT NULL",
     "READ": "INTEGER NOT NULL",
     "IS_DELETE": "INTEGER NOT NULL"
   },
@@ -19,6 +20,7 @@
     "PUBLISHER": "publisher",
     "CATEGORY": "category",
     "ISBN": "isbn",
+    "THUMBNAIL": "thumbnail",
     "READ": "read",
     "IS_DELETE": "is_delete"
   },
@@ -29,6 +31,7 @@
     "publisher": "PUBLISHER",
     "category": "CATEGORY",
     "isbn": "ISBN",
+    "thumbnail": "THUMBNAIL",
     "read": "READ",
     "is_delete": "IS_DELETE"
   }
