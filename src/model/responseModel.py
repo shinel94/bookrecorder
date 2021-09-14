@@ -44,3 +44,29 @@ class AppliedBookInfoModel(BaseModel):
     id: str
     token: str
     applied_book_index: str
+
+
+class AppliedBookListModel(BaseModel):
+    id: str
+    token: str
+
+
+class AppliedBookListByConditionModel(BaseModel):
+    id: str
+    token: str
+    start_date: str
+    end_date: str
+    rate: str = None
+    category: str = None
+
+
+class AppliedBookStaticsModel(BaseModel):
+    id: str
+    token: str
+
+
+class AppliedBookStatusModel(BaseModel):
+    id: str
+    token: str
+    applied_book_index: str
+    status: int

@@ -7,7 +7,8 @@ import src.model.responseModel as Model
 from src.model.dbModel import User, Book, Review, AppliedBook
 from src.util.security import generate_token, string_encoding, check_token
 from src.util.book_search_api import search_book_by_keyword
-from src.util.string_util import get_date_string
+from src.util.string_util import get_date_string, get_date_from_string
+from src.util.constant import G_BOOK_STATUS_FINISH
 
 
 app = FastAPI()
@@ -79,7 +80,7 @@ def apply_book(a_response: Model.BookApplyModel):
         }
 
 @app.post(
-    '/api/book',
+    '/api/book/info',
     tags=['BOOK'],
     response_model=Model.ReturnResponseModel)
 def get_applied_book_info(a_response: Model.AppliedBookInfoModel):
@@ -111,6 +112,204 @@ def get_applied_book_info(a_response: Model.AppliedBookInfoModel):
             'status': applied_book.status
         }
     }
+
+
+@app.post(
+    '/apo/book/list',
+    tags=['BOOK'],
+    response_model=Model.ReturnResponseModel
+)
+def get_applied_book_list(a_response:Model.AppliedBookListModel):
+    if not check_token(a_response.id, a_response.token):
+        return {
+            "success": False,
+            "message": "Error in User Information. Please Log in Again",
+            "data": None
+        }
+    try:
+        user = User.select(id=a_response.id)[0]
+    except IndexError:
+        return {
+            "success": False,
+            "message": "Incorrect Requests",
+            "data": None
+        }
+
+    applied_book_list = AppliedBook.select(user_index=user.index)
+    data = []
+    for applied_book in applied_book_list:
+        try:
+            book = Book.select(index=applied_book.book_index)[0]
+            data.append(
+                {
+                    'title': book.title,
+                    'author': book.author,
+                    'category': book.category,
+                    'image': book.thumbnail,
+                    'start_date': applied_book.start_date,
+                    'finish_date': applied_book.finish_date,
+                    'status': applied_book.status,
+                    'rate': applied_book.rate
+                }
+            )
+        except IndexError:
+            continue
+    return {
+        "success": True,
+        "message": "",
+        "data": data
+    }
+
+
+@app.post(
+    '/apo/book/list',
+    tags=['BOOK'],
+    response_model=Model.ReturnResponseModel
+)
+def get_applied_book_list_by_condition(a_response:Model.AppliedBookListByConditionModel):
+    if not check_token(a_response.id, a_response.token):
+        return {
+            "success": False,
+            "message": "Error in User Information. Please Log in Again",
+            "data": None
+        }
+    try:
+        user = User.select(id=a_response.id)[0]
+    except IndexError:
+        return {
+            "success": False,
+            "message": "Incorrect Requests",
+            "data": None
+        }
+
+    applied_book_list = AppliedBook.select(user_index=user.index)
+    data = []
+    for applied_book in applied_book_list:
+        try:
+
+            validate = True
+            validate = validate and ((get_date_from_string(applied_book.start_date) - get_date_from_string(a_response.start_date)).total_seconds() >= 0)
+            validate = validate and ((get_date_from_string(applied_book.start_date) - get_date_from_string(a_response.end_date)).total_seconds() <= 0)
+            if a_response.rate is not None:
+                validate = validate and (applied_book.rate == a_response.rate)
+            book: Book = Book.select(index=applied_book.book_index)[0]
+            if a_response.category is not None:
+                validate = validate and (book.category == a_response.category)
+            if validate:
+                data.append(
+                    {
+                        'title': book.title,
+                        'author': book.author,
+                        'category': book.category,
+                        'image': book.thumbnail,
+                        'start_date': applied_book.start_date,
+                        'finish_date': applied_book.finish_date,
+                        'status': applied_book.status,
+                        'rate': applied_book.rate
+                    }
+                )
+        except IndexError:
+            continue
+    return {
+        "success": True,
+        "message": "",
+        "data": data
+    }
+
+
+@app.post(
+    '/apo/book/statics',
+    tags=['BOOK'],
+    response_model=Model.ReturnResponseModel
+)
+def get_applied_book_statics(a_response: Model.AppliedBookStaticsModel):
+    if not check_token(a_response.id, a_response.token):
+        return {
+            "success": False,
+            "message": "Error in User Information. Please Log in Again",
+            "data": None
+        }
+    return {
+        "success": True,
+        "message": "Statics Not Developed Yet",
+        "data": None
+    }
+
+
+@app.post(
+    '/apo/book/status',
+    tags=['BOOK'],
+    response_model=Model.ReturnResponseModel
+)
+def get_applied_book_status(a_response:Model.AppliedBookStatusModel):
+    if not check_token(a_response.id, a_response.token):
+        return {
+            "success": False,
+            "message": "Error in User Information. Please Log in Again",
+            "data": None
+        }
+    applied_book_list = AppliedBook.select(index=a_response.applied_book_index)
+    if len(applied_book_list) == 0:
+        return {
+            "success": False,
+            "message": "Incorrect Requests",
+            "data": None
+        }
+    applied_book = applied_book_list[0]
+    applied_book.status = a_response.status
+    if a_response.status == G_BOOK_STATUS_FINISH:
+        applied_book.finish_date = get_date_string()
+
+    return {
+        "success": True,
+        "message": "Book Status Change Success",
+        "data": None
+    }
+
+
+@app.post(
+    '/apo/review/post',
+    tags=['BOOK'],
+    response_model=Model.ReturnResponseModel
+)
+def post_review(a_response):
+    if not check_token(a_response.id, a_response.token):
+        return {
+            "success": False,
+            "message": "Error in User Information. Please Log in Again",
+            "data": None
+        }
+    raise NotImplementedError
+
+
+@app.post(
+    '/apo/review/search/user',
+    tags=['BOOK'],
+    response_model=Model.ReturnResponseModel
+)
+def search_review_by_user(a_response):
+    if not check_token(a_response.id, a_response.token):
+        return {
+            "success": False,
+            "message": "Error in User Information. Please Log in Again",
+            "data": None
+        }
+    raise NotImplementedError
+
+
+@app.post(
+    '/apo/review/search/book',
+    tags=['BOOK'],
+    response_model=Model.ReturnResponseModel
+)
+def search_review_by_book(a_response):
+    if not check_token(a_response.id, a_response.token):
+        return {
+            "success": False,
+            "message": "Error in User Information. Please Log in Again",
+            "data": None
+        }
+    raise NotImplementedError
 
 
 @app.post('/api/logout',

@@ -6,3 +6,7 @@
 ### 책, 장르, 제목, 다 읽은 날짜, 페이지 등을 기록하여 시각화에 활용
 ### 네이버 오픈API를 활용해서 책을 검색할 수 있고, 검색 된 정보는 서버에 저장해서 중복해서 검색하는 것을 최소화 하는 것을 목표로 한다.
 ### 파이썬의 fastAPI를 활용해서 서버사이드를 구현하고 와 자바스크립트의 react를 활용해서 클라이언트 사이드를 구현한다.
+
+
+
+#### [wireframe url(kakao oven)](https://ovenapp.io/view/XB4OK9mdFJ9awbit2W8uorM7OOiPy5EN/qFhOT)
