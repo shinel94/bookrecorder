@@ -55,7 +55,7 @@ coverage.xml
 *.mo
 *.pot
 
-# Django stuff:
+OB# Django stuff:
 *.log
 local_settings.py
 db.sqlite3
@@ -131,3 +131,5 @@ dmypy.json
 src/cfg/apikey.txt
 
 .idea
+.vscode
+*/**/.vscode
