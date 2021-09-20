@@ -1,14 +1,48 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter, Route } from "react-router-dom";
 import { Login } from "./components/login";
 import { Main } from "./components/main";
+import { ApiAdapter } from "./api/api";
 
-const App: React.FC = () => {
+const App: React.FC = (props) => {
+    const [userId, setUserId] = useState("");
+    const [userToekn, setUserToken] = useState("");
+    const [userNickname, setUserNcikname] = useState("");
+    const logoutHandler = () => {
+        ApiAdapter.sendLogoutRequest(userId);
+        setUserToken("");
+    };
+
     return (
         <div className="App">
             <BrowserRouter>
-                <Route exact path="/" component={Login} />
-                <Route exact path="/main" component={Main} />/
+                <Route
+                    exact
+                    path="/"
+                    render={(props) => {
+                        return (
+                            <Login
+                                setUserId={setUserId}
+                                setUserToekn={setUserToken}
+                                setUserNcikname={setUserNcikname}
+                                {...props}
+                            />
+                        );
+                    }}
+                />
+                <Route
+                    exact
+                    path="/main"
+                    render={(props) => (
+                        <Main
+                            userId={userId}
+                            userNickname={userNickname}
+                            userToken={userToekn}
+                            logoutHandler={logoutHandler.bind(this)}
+                            {...props}
+                        />
+                    )}
+                />
             </BrowserRouter>
         </div>
     );

@@ -1,6 +1,7 @@
 import React from "react";
-import { RouteComponentProps } from "react-router";
+import { RouteComponentProps } from "react-router-dom";
 import { Register } from "./modal/register";
+import { ApiAdapter } from "../api/api";
 
 type LoginState = {
     user_id: string;
@@ -8,7 +9,11 @@ type LoginState = {
     isShowRegisterModal: boolean;
 };
 
-interface LoginProps extends RouteComponentProps {}
+interface LoginProps extends RouteComponentProps {
+    setUserId: Function;
+    setUserToekn: Function;
+    setUserNcikname: Function;
+}
 
 const InputStyle = {
     marginLeft: "30%",
@@ -31,20 +36,25 @@ export class Login extends React.Component<LoginProps, LoginState> {
     };
 
     updatePwdHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState(
-            (prevState) => ({
-                ...prevState,
-                user_pwd: event.target.value,
-            }),
-            () => {
-                console.log(this.state.user_pwd);
-            }
-        );
+        this.setState((prevState) => ({
+            ...prevState,
+            user_pwd: event.target.value,
+        }));
     };
 
-    loginEventHanlder = (event: React.MouseEvent<HTMLButtonElement>) => {
-        console.log("login");
+    loginEventHanlder = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
+        const a_result = await ApiAdapter.sendLoginRequest(
+            this.state.user_id,
+            this.state.user_pwd
+        );
+        if (a_result.token.length === 0) {
+            alert("Login Faile");
+        } else {
+            this.props.setUserId(this.state.user_id);
+            this.props.setUserNcikname(a_result.nickname);
+            this.props.setUserToekn(a_result.token);
+        }
         this.props.history.push("main");
     };
 
@@ -67,17 +77,24 @@ export class Login extends React.Component<LoginProps, LoginState> {
         });
     };
 
-    registerSubmitHandler = (
+    registerSubmitHandler = async (
         user_id: string,
         user_pwd: string,
-        user_nickname: String
+        user_nickname: string
     ) => {
-        console.log(user_id, user_pwd, user_nickname);
-        this.closeModal();
+        let success = await ApiAdapter.sendRegisterRequest(
+            user_id,
+            user_pwd,
+            user_nickname
+        );
+        if (success) {
+            this.closeModal();
+        } else {
+            alert("Register Fail");
+        }
     };
 
     render() {
-        console.log(this.state.isShowRegisterModal);
         return (
             <div style={InputStyle}>
                 <form>

@@ -2,6 +2,8 @@ from typing import List
 
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
+from fastapi.middleware.cors import CORSMiddleware
+
 import uvicorn
 import src.model.responseModel as Model
 from src.model.dbModel import User, Book, Review, AppliedBook
@@ -12,6 +14,14 @@ from src.util.constant import G_BOOK_STATUS_FINISH
 
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get('/{a_text}', response_class=HTMLResponse)
@@ -115,7 +125,7 @@ def get_applied_book_info(a_response: Model.AppliedBookInfoModel):
 
 
 @app.post(
-    '/apo/book/list',
+    '/api/book/list',
     tags=['BOOK'],
     response_model=Model.ReturnResponseModel
 )
@@ -162,7 +172,7 @@ def get_applied_book_list(a_response:Model.AppliedBookListModel):
 
 
 @app.post(
-    '/apo/book/list',
+    '/api/book/list/condition',
     tags=['BOOK'],
     response_model=Model.ReturnResponseModel
 )
@@ -331,6 +341,11 @@ def logout(a_response: Model.LogoutModel):
           tags=['USER'],
           response_model=Model.ReturnResponseModel)
 def login(a_response: Model.LoginModel):
+    """
+        사용자 Login API
+        example
+        requests.post('http://IP:PORT/api/login', json={'id': 'id', 'pwd': 'pwd'})
+    """
     sLoginErrorResponse = {
         "success": False,
         "message": "Please Check Login Information",
