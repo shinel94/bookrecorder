@@ -107,6 +107,7 @@ export class Login extends React.Component<LoginProps, LoginState> {
                             width: "100%",
                             height: "30px",
                             marginTop: "10px",
+                            fontFamily: "KCC",
                         }}
                     />
                     <input
@@ -118,6 +119,7 @@ export class Login extends React.Component<LoginProps, LoginState> {
                             width: "100%",
                             height: "30px",
                             marginTop: "10px",
+                            fontFamily: "KCC",
                         }}
                     />
                     <div
@@ -129,13 +131,13 @@ export class Login extends React.Component<LoginProps, LoginState> {
                         }}
                     >
                         <button
-                            style={{ height: "30px" }}
+                            style={{ height: "30px", fontFamily: "KCC" }}
                             onClick={this.loginEventHanlder}
                         >
                             Login
                         </button>
                         <button
-                            style={{ height: "30px" }}
+                            style={{ height: "30px", fontFamily: "KCC" }}
                             onClick={this.openModal}
                         >
                             Register

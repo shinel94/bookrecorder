@@ -1,5 +1,9 @@
 import axios from "axios";
-import { BookInfoModel, G_SERVER_URL } from "../utils/constant";
+import {
+    BookInfoModel,
+    SearchedBookModel,
+    G_SERVER_URL,
+} from "../utils/constant";
 
 export class ApiAdapter {
     static p_server_url: string = G_SERVER_URL;
@@ -83,5 +87,60 @@ export class ApiAdapter {
                 console.log(a_error);
             });
         return fetch_result;
+    }
+
+    static async sendSearchBookRequest(
+        a_id: string,
+        a_token: string,
+        a_keyword: string
+    ): Promise<SearchedBookModel[]> {
+        const fetch_result: SearchedBookModel[] = [];
+        await this.sendPostRequest<{
+            id: string;
+            token: string;
+            keyword: string;
+        }>("/api/book/search", { id: a_id, token: a_token, keyword: a_keyword })
+            .then((a_response) => {
+                fetch_result.push(...a_response.data.data);
+            })
+            .catch((a_error) => {
+                console.log(a_error);
+            });
+        return fetch_result;
+    }
+
+    static async sendApplyBookRequest(
+        a_id: string,
+        a_token: string,
+        a_title: string,
+        a_author: string,
+        a_publisher: string,
+        a_category: string,
+        a_isbn: string,
+        a_thumbnail: string
+    ): Promise<void> {
+        await this.sendPostRequest<{
+            id: string;
+            token: string;
+            title: string;
+            author: string;
+            publisher: string;
+            category: string;
+            isbn: string;
+            thumbnail: string;
+        }>("/api/book/apply", {
+            id: a_id,
+            token: a_token,
+            title: a_title,
+            author: a_author,
+            publisher: a_publisher,
+            category: a_category,
+            isbn: a_isbn,
+            thumbnail: a_thumbnail,
+        })
+            .then()
+            .catch((a_error) => {
+                console.log(a_error);
+            });
     }
 }

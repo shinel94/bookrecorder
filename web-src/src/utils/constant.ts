@@ -10,3 +10,17 @@ export interface BookInfoModel {
     status: string;
     rate: string;
 }
+
+export interface SearchedBookModel {
+    author: string;
+    category: string;
+    description: string;
+    discount: string;
+    image: string;
+    isbn: string;
+    link: string;
+    price: string;
+    pubdate: string;
+    publisher: string;
+    title: string;
+}

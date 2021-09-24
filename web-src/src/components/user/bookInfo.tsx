@@ -27,13 +27,18 @@ export class BookInfo extends React.Component<BookInfoProps, BookInfoState> {
         ApiAdapter.sendGetBookListRequest(
             this.props.userId,
             this.props.userToken
-        ).then((a_book_list) => {
+        ).then((aBookList) => {
+            console.log(
+                aBookList.filter((data) => !(data.finish_date === null))
+            );
             this.setState((prevState) => {
                 return {
                     ...prevState,
-                    bookList: a_book_list,
-                    totalBookNumber: 10,
-                    readBookNumber: 2,
+                    bookList: aBookList,
+                    totalBookNumber: aBookList.length,
+                    readBookNumber: aBookList.filter(
+                        (data) => !(data.finish_date === null)
+                    ).length,
                 };
             });
         });

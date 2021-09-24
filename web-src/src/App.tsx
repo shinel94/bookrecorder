@@ -3,6 +3,7 @@ import { BrowserRouter, Route } from "react-router-dom";
 import { Login } from "./components/login";
 import { Main } from "./components/main";
 import { ApiAdapter } from "./api/api";
+import Divider from "@mui/material/Divider";
 
 const App: React.FC = (props) => {
     const [userId, setUserId] = useState("");
@@ -15,6 +16,8 @@ const App: React.FC = (props) => {
 
     return (
         <div className="App">
+            <h3 style={{ textAlign: "center" }}>BookRecoder</h3>
+            <Divider />
             <BrowserRouter>
                 <Route
                     exact

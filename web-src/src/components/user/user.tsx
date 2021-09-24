@@ -15,8 +15,10 @@ export class User extends React.Component<UserProps, UserState> {
     state: UserState = {};
     render() {
         return (
-            <Stack style={{ alignContent: "center", margin: "10px" }}>
-                <h3>{this.props.userNickname}</h3>
+            <Stack style={{ margin: "10px" }}>
+                <h3 style={{ textAlign: "center" }}>
+                    {this.props.userNickname}
+                </h3>
                 <Button
                     onClick={this.props.logoutHandler}
                     style={{

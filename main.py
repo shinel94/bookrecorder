@@ -70,9 +70,9 @@ def apply_book(a_response: Model.BookApplyModel):
         book = book_list[0]
         book.read += 1
         book.update()
-    user = User.select(id=a_response.id)
+    user = User.select(id=a_response.id)[0]
     applied_book_list = AppliedBook.select(user_index=user.index, book_index=book.index)
-    if len(applied_book_list) == 0:
+    if len(applied_book_list) != 0:
         return {
             "success": False,
             "message": "Book Already Applied!",

@@ -34,11 +34,13 @@ const style = {
     border: "1px solid #bdb2ff",
     boxShadow: 12,
     p: 4,
+    fontFamily: "KCC",
 };
 
 const inputStyle = {
     margin: "10px",
     width: "100%",
+    fontFamily: "KCC",
 };
 
 export class Register extends React.Component<RegisterProps, RegisterState> {
@@ -96,18 +98,22 @@ export class Register extends React.Component<RegisterProps, RegisterState> {
                 onClose={this.props.modalCloseHandler}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
+                style={{ fontFamily: "KCC" }}
             >
                 <Box sx={style}>
                     <Typography
                         id="modal-modal-title"
                         variant="h6"
                         component="h2"
-                        style={{ marginBottom: "25px" }}
+                        style={{ marginBottom: "25px", fontFamily: "KCC" }}
                     >
                         INFORMATION
                     </Typography>
 
-                    <InputLabel htmlFor="filled-adornment-password">
+                    <InputLabel
+                        htmlFor="filled-adornment-password"
+                        style={{ fontFamily: "KCC" }}
+                    >
                         ID
                     </InputLabel>
                     <OutlinedInput
@@ -119,7 +125,10 @@ export class Register extends React.Component<RegisterProps, RegisterState> {
                         style={inputStyle}
                     />
 
-                    <InputLabel htmlFor="filled-adornment-password">
+                    <InputLabel
+                        htmlFor="filled-adornment-password"
+                        style={{ fontFamily: "KCC" }}
+                    >
                         Password
                     </InputLabel>
                     <OutlinedInput
@@ -147,7 +156,10 @@ export class Register extends React.Component<RegisterProps, RegisterState> {
                         style={inputStyle}
                     />
 
-                    <InputLabel htmlFor="filled-adornment-password">
+                    <InputLabel
+                        htmlFor="filled-adornment-password"
+                        style={{ fontFamily: "KCC" }}
+                    >
                         NickName
                     </InputLabel>
                     <OutlinedInput
@@ -169,7 +181,7 @@ export class Register extends React.Component<RegisterProps, RegisterState> {
                             );
                         }}
                         size="large"
-                        style={{ float: "right" }}
+                        style={{ float: "right", fontFamily: "KCC" }}
                     >
                         Submit
                     </Button>

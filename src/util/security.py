@@ -14,5 +14,8 @@ def generate_token():
 
 
 def check_token(id, token):
-    user = User.select(id=id)[0]
+    try:
+        user = User.select(id=id)[0]
+    except IndexError:
+        return False
     return user.token == token
