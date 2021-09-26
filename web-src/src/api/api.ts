@@ -3,6 +3,7 @@ import {
     BookInfoModel,
     SearchedBookModel,
     G_SERVER_URL,
+    BookReviewModel,
 } from "../utils/constant";
 
 export class ApiAdapter {
@@ -142,5 +143,25 @@ export class ApiAdapter {
             .catch((a_error) => {
                 console.log(a_error);
             });
+    }
+
+    static async sendGetReview(
+        a_id: string,
+        a_token: string,
+        a_isbn: string
+    ): Promise<BookReviewModel[]> {
+        const fetch_result: BookReviewModel[] = [];
+        await this.sendPostRequest<{
+            id: string;
+            token: string;
+            isbn: string;
+        }>("/api/book/search", { id: a_id, token: a_token, isbn: a_isbn })
+            .then((a_response) => {
+                fetch_result.push(...a_response.data.data);
+            })
+            .catch((a_error) => {
+                console.log(a_error);
+            });
+        return fetch_result;
     }
 }

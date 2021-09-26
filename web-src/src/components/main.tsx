@@ -12,10 +12,15 @@ import lime from "@material-ui/core/colors/lime";
 import { ThemeProvider } from "@material-ui/styles";
 import { Search } from "./modal/saerch";
 import { ApiAdapter } from "../api/api";
-import { SearchedBookModel } from "../utils/constant";
+import { BookInfoModel, SearchedBookModel } from "../utils/constant";
+import { Book } from "./book/book";
+import { SelectBook } from "./user/selectBook";
 
 type MainState = {
     isShowRegisterModal: boolean;
+    readBookList: BookInfoModel[];
+    isReadOnly: boolean;
+    selectedBook: BookInfoModel | undefined;
 };
 
 interface MainProps extends RouteComponentProps {
@@ -34,6 +39,9 @@ const theme = createTheme({
 export class Main extends React.Component<MainProps, MainState> {
     state: MainState = {
         isShowRegisterModal: false,
+        isReadOnly: false,
+        readBookList: [],
+        selectedBook: undefined,
     };
     constructor(props: MainProps) {
         super(props);
@@ -84,8 +92,86 @@ export class Main extends React.Component<MainProps, MainState> {
             book.isbn,
             book.image
         );
+        ApiAdapter.sendGetBookListRequest(
+            this.props.userId,
+            this.props.userToken
+        ).then((aBookList) => {
+            this.setState((prevState) => {
+                return {
+                    ...prevState,
+                    readBookList: aBookList,
+                };
+            });
+        });
     };
+
+    componentDidMount() {
+        ApiAdapter.sendGetBookListRequest(
+            this.props.userId,
+            this.props.userToken
+        ).then((aBookList) => {
+            this.setState((prevState) => {
+                return {
+                    ...prevState,
+                    readBookList: aBookList,
+                };
+            });
+        });
+    }
+
+    setIsReadOnly = (value: boolean) => {
+        this.setState((prevState) => {
+            return {
+                ...prevState,
+                isReadOnly: value,
+            };
+        });
+    };
+
+    bookClickListner = (index: number) => {
+        this.setState((prevState) => {
+            return {
+                ...prevState,
+                selectedBook: this.state.readBookList[index],
+            };
+        });
+    };
+
+    renderingBookInfoComponent = () => {
+        if (typeof this.state.selectedBook === "undefined") {
+            var aBookList = this.state.readBookList;
+            if (this.state.isReadOnly) {
+                aBookList = aBookList.filter(
+                    (data) => data.finish_date === null
+                );
+            }
+            return aBookList.map((aBookInfo, index) => {
+                return (
+                    <Book
+                        index={index}
+                        title={aBookInfo.title}
+                        author={aBookInfo.author}
+                        category={aBookInfo.category}
+                        image={aBookInfo.image}
+                        onClickHandler={this.bookClickListner.bind(this)}
+                        cursor="pointer"
+                    ></Book>
+                );
+            });
+        } else {
+            return (
+                <SelectBook
+                    userId={this.props.userId}
+                    userToken={this.props.userToken}
+                    selectBook={this.state.selectedBook}
+                />
+            );
+        }
+    };
+
     render() {
+        const bookInfoComponent = this.renderingBookInfoComponent();
+
         return (
             <Container>
                 <Box
@@ -109,6 +195,7 @@ export class Main extends React.Component<MainProps, MainState> {
                             <BookInfo
                                 userId={this.props.userId}
                                 userToken={this.props.userToken}
+                                clickListner={this.setIsReadOnly.bind(this)}
                             />
                             <Divider />
                             <ThemeProvider theme={theme}>
@@ -150,7 +237,15 @@ export class Main extends React.Component<MainProps, MainState> {
                             container
                             style={{ border: "0.5px solid white" }}
                         >
-                            BookInfo
+                            <Box
+                                style={{
+                                    margin: "3%",
+                                    height: "95vh",
+                                    overflow: "scroll",
+                                }}
+                            >
+                                {bookInfoComponent}
+                            </Box>
                         </Grid>
                     </Grid>
                 </Box>

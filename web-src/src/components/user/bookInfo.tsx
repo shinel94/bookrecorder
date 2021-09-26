@@ -14,6 +14,7 @@ type BookInfoState = {
 interface BookInfoProps {
     userId: string;
     userToken: string;
+    clickListner: (a1: boolean) => void;
 }
 
 export class BookInfo extends React.Component<BookInfoProps, BookInfoState> {
@@ -37,7 +38,7 @@ export class BookInfo extends React.Component<BookInfoProps, BookInfoState> {
                     bookList: aBookList,
                     totalBookNumber: aBookList.length,
                     readBookNumber: aBookList.filter(
-                        (data) => !(data.finish_date === null)
+                        (data) => data.finish_date === null
                     ).length,
                 };
             });
@@ -51,10 +52,20 @@ export class BookInfo extends React.Component<BookInfoProps, BookInfoState> {
                 spacing={2}
                 divider={<Divider orientation="vertical" flexItem />}
             >
-                <Box style={{ width: "100%", margin: "5%" }}>
+                <Box
+                    style={{ width: "100%", margin: "5%", cursor: "pointer" }}
+                    onClick={() => {
+                        this.props.clickListner(false);
+                    }}
+                >
                     <h5>{"Total " + this.state.totalBookNumber || 0}</h5>
                 </Box>
-                <Box style={{ width: "100%", margin: "5%" }}>
+                <Box
+                    style={{ width: "100%", margin: "5%", cursor: "pointer" }}
+                    onClick={() => {
+                        this.props.clickListner(true);
+                    }}
+                >
                     <h5>{"Now " + this.state.readBookNumber || 0}</h5>
                 </Box>
             </Stack>

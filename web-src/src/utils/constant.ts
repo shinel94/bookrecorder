@@ -3,6 +3,7 @@ export const G_SERVER_URL: string = "http://127.0.0.1:8080";
 export interface BookInfoModel {
     title: string;
     author: string;
+    isbn: string;
     category: string;
     image: string;
     start_date: string;
@@ -23,4 +24,10 @@ export interface SearchedBookModel {
     pubdate: string;
     publisher: string;
     title: string;
+}
+
+export interface BookReviewModel {
+    user_nickname: string;
+    review: string;
+    comment: string[];
 }

@@ -11,6 +11,7 @@ from src.util.security import generate_token, string_encoding, check_token
 from src.util.book_search_api import search_book_by_keyword
 from src.util.string_util import get_date_string, get_date_from_string
 from src.util.constant import G_BOOK_STATUS_FINISH
+from src.util.io_util import load_json
 
 
 app = FastAPI()
@@ -154,6 +155,7 @@ def get_applied_book_list(a_response:Model.AppliedBookListModel):
                 {
                     'title': book.title,
                     'author': book.author,
+                    'isbn': book.isbn,
                     'category': book.category,
                     'image': book.thumbnail,
                     'start_date': applied_book.start_date,
@@ -320,6 +322,36 @@ def search_review_by_book(a_response):
             "data": None
         }
     raise NotImplementedError
+
+
+@app.post(
+    '/apo/review/search',
+    tags=['BOOK'],
+    response_model=Model.ReturnResponseModel
+)
+def search_review(a_response: Model.ReviwSearchModel):
+    if not check_token(a_response.id, a_response.token):
+        return {
+            "success": False,
+            "message": "Error in User Information. Please Log in Again",
+            "data": None
+        }
+    user = User.select(id=a_response.id)[0]
+    book = Book.select(isbn=a_response.isbn)[0]
+    reviewList = Review.select(user_index=user.index, book_index=book.index)
+    data = []
+    for review in reviewList:
+        review_content = load_json(review.file_path)
+        data.append({
+            'user_nickname': review_content['User'],
+            'review': review_content['Review'],
+            'comment': review_content['Comment']
+        })
+    return {
+        "success": True,
+        "message": "",
+        "data": data
+    }
 
 
 @app.post('/api/logout',

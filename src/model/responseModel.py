@@ -70,3 +70,9 @@ class AppliedBookStatusModel(BaseModel):
     token: str
     applied_book_index: str
     status: int
+
+
+class ReviwSearchModel(BaseModel):
+    id: str
+    token: str
+    isbn: str

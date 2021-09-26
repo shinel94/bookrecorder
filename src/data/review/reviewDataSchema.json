@@ -1,6 +1,6 @@
 {
-  "User": "User Index",
-  "Book": "Book Index",
-  "Review": "Review",
+  "User": "UserNickName",
+  "Book": "BookTitle",
+  "Review": "리뷰 본문",
   "Comment": ["Comment1", "Comment2"]
 }

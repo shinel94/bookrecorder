@@ -133,3 +133,4 @@ src/cfg/apikey.txt
 .idea
 .vscode
 */**/.vscode
+*.bat
