@@ -12,7 +12,7 @@ from src.util.book_search_api import search_book_by_keyword
 from src.util.string_util import get_date_string, get_date_from_string
 from src.util.constant import G_BOOK_STATUS_FINISH
 from src.util.io_util import load_json
-
+from src.model.reviewModel import Review as ReviewVO
 
 app = FastAPI()
 
@@ -116,6 +116,7 @@ def get_applied_book_info(a_response: Model.AppliedBookInfoModel):
         "data": {
             'title': book.title,
             'author': book.author,
+            'isbn': book.isbn,
             'category': book.category,
             'image': book.thumbnail,
             'start_date': applied_book.start_date,
@@ -124,6 +125,40 @@ def get_applied_book_info(a_response: Model.AppliedBookInfoModel):
         }
     }
 
+@app.post(
+    '/api/book/info/update',
+    tags=['BOOK'],
+    response_model=Model.ReturnResponseModel)
+def update_applied_book_info(a_response: Model.UpdateAppliedBookInfoModel):
+    if not check_token(a_response.id, a_response.token):
+        return {
+            "success": False,
+            "message": "Error in User Information. Please Log in Again",
+            "data": None
+        }
+    try:
+        book = Book.select(isbn=a_response.isbn)[0]
+        user = User.select(id=a_response.id)[0]
+        applied_book = AppliedBook.select(user_index=user.index, book_index=book.index)[0]
+        applied_book.start_date = a_response.start_date
+        applied_book.finish_date = a_response.finish_date
+        applied_book.rate = a_response.rate
+        applied_book.status = a_response.status
+        try:
+            applied_book.update()
+        except:
+            pass
+        return {
+            "success": True,
+            "message": "",
+            "data": None
+        }
+    except:
+        return {
+            "success": False,
+            "message": "Incorrect Requests",
+            "data": None
+        }
 
 @app.post(
     '/api/book/list',
@@ -212,6 +247,7 @@ def get_applied_book_list_by_condition(a_response:Model.AppliedBookListByConditi
                     {
                         'title': book.title,
                         'author': book.author,
+                        'isbn': book.isbn,
                         'category': book.category,
                         'image': book.thumbnail,
                         'start_date': applied_book.start_date,
@@ -230,7 +266,7 @@ def get_applied_book_list_by_condition(a_response:Model.AppliedBookListByConditi
 
 
 @app.post(
-    '/apo/book/statics',
+    '/api/book/statics',
     tags=['BOOK'],
     response_model=Model.ReturnResponseModel
 )
@@ -249,7 +285,7 @@ def get_applied_book_statics(a_response: Model.AppliedBookStaticsModel):
 
 
 @app.post(
-    '/apo/book/status',
+    '/api/book/status',
     tags=['BOOK'],
     response_model=Model.ReturnResponseModel
 )
@@ -280,56 +316,215 @@ def get_applied_book_status(a_response:Model.AppliedBookStatusModel):
 
 
 @app.post(
-    '/apo/review/post',
+    '/api/review/post',
     tags=['BOOK'],
     response_model=Model.ReturnResponseModel
 )
-def post_review(a_response):
+def post_review(a_response:Model.PostReviewModel):
     if not check_token(a_response.id, a_response.token):
         return {
             "success": False,
             "message": "Error in User Information. Please Log in Again",
             "data": None
         }
-    raise NotImplementedError
+    user = User.select(id=a_response.id)[0]
+    book = Book.select(isbn=a_response.isbn)[0]
+    review = ReviewVO(user.nickname, book.title, a_response.review, a_response.score)
+    file_name = review.save()
+    review_record_index = Review.get_index()
+    review_record = Review(review_record_index, user.index, book.index, file_name, a_response.range, 0)
+    review_record.insert()
+    return {
+        "success": True,
+        "message": "Apply Review Success",
+        "data": None
+    }
 
 
 @app.post(
-    '/apo/review/search/user',
+    '/api/review/delete',
     tags=['BOOK'],
     response_model=Model.ReturnResponseModel
 )
-def search_review_by_user(a_response):
+def delete_review(a_response:Model.PostReviewModel):
     if not check_token(a_response.id, a_response.token):
         return {
             "success": False,
             "message": "Error in User Information. Please Log in Again",
             "data": None
         }
-    raise NotImplementedError
+    user = User.select(id=a_response.id)[0]
+    book = Book.select(isbn=a_response.isbn)[0]
+    review_record = Review.select(user_index=user.index, book_index=book.index)[0]
+    ReviewVO.delete(review_record.file_path)
+    review_record.is_delete = 1
+    review_record.update()
+    return {
+        "success": True,
+        "message": "Apply Review Success",
+        "data": None
+    }
 
 
 @app.post(
-    '/apo/review/search/book',
+    '/api/review/update',
     tags=['BOOK'],
     response_model=Model.ReturnResponseModel
 )
-def search_review_by_book(a_response):
+def update_review(a_response: Model.UpdateReviewModel):
     if not check_token(a_response.id, a_response.token):
         return {
             "success": False,
             "message": "Error in User Information. Please Log in Again",
             "data": None
         }
-    raise NotImplementedError
+    user = User.select(id=a_response.id)[0]
+    book = Book.select(isbn=a_response.isbn)[0]
+    review_record = Review.select(user_index=user.index, book_index=book.index)[0]
+    review = ReviewVO.load_from_json(review_record.file_path)
+    review.review = a_response.review
+    review.score = a_response.score
+
+    review.save(review_record.file_path)
+
+    review_record.range = a_response.range
+    try:
+        review_record.update()
+    except:
+        pass
+
+    return {
+        "success": True,
+        "message": "Update Review Success",
+        "data": None
+    }
 
 
 @app.post(
-    '/apo/review/search',
+    '/api/review/comment',
     tags=['BOOK'],
     response_model=Model.ReturnResponseModel
 )
-def search_review(a_response: Model.ReviwSearchModel):
+def add_review_comment(a_response: Model.AddCommentModel):
+    if not check_token(a_response.id, a_response.token):
+        return {
+            "success": False,
+            "message": "Error in User Information. Please Log in Again",
+            "data": None
+        }
+    user = User.select(id=a_response.target_user_id)[0]
+    book = Book.select(isbn=a_response.isbn)[0]
+    review_record = Review.select(user_index=user.index, book_index=book.index)[0]
+    review = ReviewVO.load_from_json(review_record.file_path)
+    review.comment[a_response.id] = a_response.comment # hash map 이기 때문에, update도 동일한 api로 진행할 수 있다.
+
+    review.save(review_record.file_path)
+
+    return {
+        "success": True,
+        "message": "Add Comment Success",
+        "data": None
+    }
+
+
+@app.post(
+    '/api/review/comment/delete',
+    tags=['BOOK'],
+    response_model=Model.ReturnResponseModel
+)
+def delete_review_comment(a_response: Model.DeleteCommentModel):
+    if not check_token(a_response.id, a_response.token):
+        return {
+            "success": False,
+            "message": "Error in User Information. Please Log in Again",
+            "data": None
+        }
+    user = User.select(id=a_response.target_user_id)[0]
+    book = Book.select(isbn=a_response.isbn)[0]
+    review_record = Review.select(user_index=user.index, book_index=book.index)[0]
+    review = ReviewVO.load_from_json(review_record.file_path)
+    review.comment.pop(a_response.id)
+
+    review.save(review_record.file_path)
+
+    return {
+        "success": True,
+        "message": "Delete Comment Success",
+        "data": None
+    }
+
+
+@app.post(
+    '/api/review/search/user',
+    tags=['BOOK'],
+    response_model=Model.ReturnResponseModel
+)
+def search_review_by_user(a_response:Model.ReviewSearchByUserModel):
+    if not check_token(a_response.id, a_response.token):
+        return {
+            "success": False,
+            "message": "Error in User Information. Please Log in Again",
+            "data": None
+        }
+    user = User.select(nickname=a_response.target_nickname)[0]
+    reviewList = Review.select(user_index=user.index, range=0)
+    data = []
+    for review in reviewList:
+        review_content = ReviewVO.load_from_json(review.file_path)
+        data.append({
+            'review_index': review.index,
+            'user_nickname': review_content.nickname,
+            'book_title': review_content.title,
+            'review': review_content.review,
+            'comment': review_content.comment,
+            'score': review_content.score
+        })
+    return {
+        "success": True,
+        "message": "",
+        "data": data
+    }
+
+
+@app.post(
+    '/api/review/search/book',
+    tags=['BOOK'],
+    response_model=Model.ReturnResponseModel
+)
+def search_review_by_book(a_response: Model.ReviewSearchByBookModel):
+    if not check_token(a_response.id, a_response.token):
+        return {
+            "success": False,
+            "message": "Error in User Information. Please Log in Again",
+            "data": None
+        }
+    book = Book.select(isbn=a_response.isbn)[0]
+    user = User.select(id=a_response.id)[0]
+    reviewList = [*Review.select(book_index=book.index, range=0), *Review.select(user_index=user.index, book_index=book.index, range=1)]
+    data = []
+    for review in reviewList:
+        review_content = ReviewVO.load_from_json(review.file_path)
+        data.append({
+            'review_index': review.index,
+            'user_nickname': review_content.nickname,
+            'book_title': review_content.title,
+            'review': review_content.review,
+            'comment': review_content.comment,
+            'score': review_content.score
+        })
+    return {
+        "success": True,
+        "message": "",
+        "data": data
+    }
+
+
+@app.post(
+    '/api/review/search',
+    tags=['BOOK'],
+    response_model=Model.ReturnResponseModel
+)
+def search_review(a_response: Model.ReviewSearchModel):
     if not check_token(a_response.id, a_response.token):
         return {
             "success": False,
@@ -341,11 +536,14 @@ def search_review(a_response: Model.ReviwSearchModel):
     reviewList = Review.select(user_index=user.index, book_index=book.index)
     data = []
     for review in reviewList:
-        review_content = load_json(review.file_path)
+        review_content = ReviewVO.load_from_json(review.file_path)
         data.append({
-            'user_nickname': review_content['User'],
-            'review': review_content['Review'],
-            'comment': review_content['Comment']
+            'review_index': review.index,
+            'user_nickname': review_content.nickname,
+            'book_title': review_content.title,
+            'review': review_content.review,
+            'comment': review_content.comment,
+            'score': review_content.score
         })
     return {
         "success": True,

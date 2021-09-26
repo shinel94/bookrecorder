@@ -152,7 +152,7 @@ class User(DataBaseModel):
         super().__init__(a_index)
 
     @classmethod
-    def select(cls, index=None, id=None, pwd=None, nickname=None, read=None, is_delete=None):
+    def select(cls, index=None, id=None, pwd=None, nickname=None, read=None, is_delete=0):
         selected_row = cls._select(index=index, id=id, pwd=pwd, nickname=nickname, read=read, is_delete=is_delete)
         return [cls.from_row(row) for row in selected_row]
 
@@ -201,7 +201,7 @@ class Book(DataBaseModel):
         self._prev_is_delete = self.is_delete
 
     @classmethod
-    def select(cls, index=None, title=None, author=None, publisher=None, category=None, isbn=None, thumbnail=None, read=None, is_delete=None):
+    def select(cls, index=None, title=None, author=None, publisher=None, category=None, isbn=None, thumbnail=None, read=None, is_delete=0):
         selected_row = cls._select(
             index=index,
             title=title,
@@ -249,7 +249,7 @@ class AppliedBook(DataBaseModel):
         self._prev_is_delete = self.is_delete
 
     @classmethod
-    def select(cls, index=None, user_index=None, book_index=None, start_date=None, finish_date=None, rate=None, status=None, is_delete=None):
+    def select(cls, index=None, user_index=None, book_index=None, start_date=None, finish_date=None, rate=None, status=None, is_delete=0):
         selected_row = cls._select(
             index=index,
             user_index=user_index,
@@ -271,7 +271,7 @@ class Review(DataBaseModel):
         self.user_index = a_user_index
         self.book_index = a_book_index
         self.file_path = a_file_path
-        self.range = a_range
+        self.range = a_range  # 0: 전체공개, 1: 나만보기
         self.is_delete = a_is_delete
 
         self._prev_user_index = self.user_index
@@ -290,7 +290,7 @@ class Review(DataBaseModel):
         self._prev_is_delete = self.is_delete
 
     @classmethod
-    def select(cls, index=None, user_index=None, book_index=None, file_path=None, range=None, is_delete=None):
+    def select(cls, index=None, user_index=None, book_index=None, file_path=None, range=None, is_delete=0):
         selected_row = cls._select(
             index=index,
             user_index=user_index,

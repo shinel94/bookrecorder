@@ -27,7 +27,15 @@ export interface SearchedBookModel {
 }
 
 export interface BookReviewModel {
+    review_index: string;
     user_nickname: string;
+    book_title: string;
     review: string;
-    comment: string[];
+    comment: any; // {id1: comment, id2: comment} 인 hash map이 반환
+    score: {
+        interest: number;
+        readability: number;
+        quantity: number;
+        total: number;
+    };
 }

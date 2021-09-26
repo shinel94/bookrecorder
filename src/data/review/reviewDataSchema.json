@@ -2,5 +2,11 @@
   "User": "UserNickName",
   "Book": "BookTitle",
   "Review": "리뷰 본문",
-  "Comment": ["Comment1", "Comment2"]
+  "score": {
+    "재미": 5,
+    "가독성": 5,
+    "분량": 3,
+    "전체평점": 10
+  },
+  "Comment": {"test@test.com": "Comment1", "new_user": "Comment2"}
 }
