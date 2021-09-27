@@ -164,4 +164,36 @@ export class ApiAdapter {
             });
         return fetch_result;
     }
+
+    static async sendUpdateBookInfo(
+        a_id: string,
+        a_token: string,
+        a_isbn: string,
+        a_start_date: string | null,
+        a_finish_date: string | null,
+        a_status: number | null,
+        a_rate: number | null
+    ): Promise<void> {
+        await this.sendPostRequest<{
+            id: string;
+            token: string;
+            isbn: string;
+            start_date: string | null;
+            finish_date: string | null;
+            status: number | null;
+            rate: number | null;
+        }>("/api/book/info/update", {
+            id: a_id,
+            token: a_token,
+            isbn: a_isbn,
+            start_date: a_start_date,
+            finish_date: a_finish_date,
+            status: a_status,
+            rate: a_rate,
+        })
+            .then()
+            .catch((a_error) => {
+                console.log(a_error);
+            });
+    }
 }

@@ -52,8 +52,8 @@ class UpdateAppliedBookInfoModel(BaseModel):
     isbn: str
     start_date: Union[str, None]
     finish_date: Union[str, None]
-    status: Union[str, None]
-    rate: Union[str, None]
+    status: Union[int, None]
+    rate: Union[int, None]
 
 
 class AppliedBookListModel(BaseModel):

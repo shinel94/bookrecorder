@@ -81,7 +81,6 @@ export class Main extends React.Component<MainProps, MainState> {
     };
 
     addBookHandler = async (book: SearchedBookModel) => {
-        console.log(book);
         ApiAdapter.sendApplyBookRequest(
             this.props.userId,
             this.props.userToken,
@@ -92,31 +91,11 @@ export class Main extends React.Component<MainProps, MainState> {
             book.isbn,
             book.image
         );
-        ApiAdapter.sendGetBookListRequest(
-            this.props.userId,
-            this.props.userToken
-        ).then((aBookList) => {
-            this.setState((prevState) => {
-                return {
-                    ...prevState,
-                    readBookList: aBookList,
-                };
-            });
-        });
+        this.fetchBookList();
     };
 
     componentDidMount() {
-        ApiAdapter.sendGetBookListRequest(
-            this.props.userId,
-            this.props.userToken
-        ).then((aBookList) => {
-            this.setState((prevState) => {
-                return {
-                    ...prevState,
-                    readBookList: aBookList,
-                };
-            });
-        });
+        this.fetchBookList();
     }
 
     setIsReadOnly = (value: boolean) => {
@@ -124,15 +103,16 @@ export class Main extends React.Component<MainProps, MainState> {
             return {
                 ...prevState,
                 isReadOnly: value,
+                selectedBook: undefined,
             };
         });
     };
 
-    bookClickListner = (index: number) => {
+    bookClickListner = (aBookInfo: BookInfoModel) => {
         this.setState((prevState) => {
             return {
                 ...prevState,
-                selectedBook: this.state.readBookList[index],
+                selectedBook: aBookInfo,
             };
         });
     };
@@ -153,8 +133,14 @@ export class Main extends React.Component<MainProps, MainState> {
                         author={aBookInfo.author}
                         category={aBookInfo.category}
                         image={aBookInfo.image}
-                        onClickHandler={this.bookClickListner.bind(this)}
+                        onClickHandler={() => {
+                            this.bookClickListner(aBookInfo);
+                        }}
                         cursor="pointer"
+                        startDate={aBookInfo.start_date}
+                        finishDate={aBookInfo.finish_date}
+                        status={aBookInfo.status}
+                        rate={aBookInfo.rate}
                     ></Book>
                 );
             });
@@ -164,11 +150,57 @@ export class Main extends React.Component<MainProps, MainState> {
                     userId={this.props.userId}
                     userToken={this.props.userToken}
                     selectBook={this.state.selectedBook}
+                    statusUpdateHandler={this.selectBookStatusUpdate.bind(this)}
                 />
             );
         }
     };
 
+    selectBookStatusUpdate() {
+        if (this.state.selectedBook) {
+            const selectBook: BookInfoModel = this.state.selectedBook;
+            if (selectBook.status === 0) {
+                selectBook.status = 1;
+                selectBook.finish_date = new Date()
+                    .toISOString()
+                    .split(".")[0]
+                    .replace("T", " ");
+            } else {
+                selectBook.status = 0;
+                selectBook.finish_date = null;
+            }
+            this.setState((prevState) => {
+                return {
+                    ...prevState,
+                    selectBook: selectBook,
+                };
+            });
+            ApiAdapter.sendUpdateBookInfo(
+                this.props.userId,
+                this.props.userToken,
+                selectBook.isbn,
+                selectBook.start_date,
+                selectBook.finish_date,
+                selectBook.status,
+                selectBook.rate
+            );
+            this.fetchBookList();
+        }
+    }
+
+    fetchBookList() {
+        ApiAdapter.sendGetBookListRequest(
+            this.props.userId,
+            this.props.userToken
+        ).then((aBookList) => {
+            this.setState((prevState) => {
+                return {
+                    ...prevState,
+                    readBookList: aBookList,
+                };
+            });
+        });
+    }
     render() {
         const bookInfoComponent = this.renderingBookInfoComponent();
 
@@ -196,6 +228,12 @@ export class Main extends React.Component<MainProps, MainState> {
                                 userId={this.props.userId}
                                 userToken={this.props.userToken}
                                 clickListner={this.setIsReadOnly.bind(this)}
+                                totalBookNumber={this.state.readBookList.length}
+                                readBookNumber={
+                                    this.state.readBookList.filter(
+                                        (data) => data.status === 0
+                                    ).length
+                                }
                             />
                             <Divider />
                             <ThemeProvider theme={theme}>

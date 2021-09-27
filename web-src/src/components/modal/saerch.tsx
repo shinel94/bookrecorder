@@ -83,7 +83,6 @@ export class Search extends React.Component<SearchProps, SearchState> {
     };
 
     clickListener = (index: number) => {
-        console.log(index);
         this.props.addBookHandler(this.state.bookList[index]);
         this.props.modalCloseHandler();
     };

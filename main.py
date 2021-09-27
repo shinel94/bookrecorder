@@ -121,7 +121,8 @@ def get_applied_book_info(a_response: Model.AppliedBookInfoModel):
             'image': book.thumbnail,
             'start_date': applied_book.start_date,
             'finish_date': applied_book.finish_date,
-            'status': applied_book.status
+            'status': applied_book.status,
+            'rate': applied_book.rate
         }
     }
 

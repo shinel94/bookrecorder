@@ -7,9 +7,9 @@ export interface BookInfoModel {
     category: string;
     image: string;
     start_date: string;
-    finish_date: string;
-    status: string;
-    rate: string;
+    finish_date: string | null;
+    status: number;
+    rate: number;
 }
 
 export interface SearchedBookModel {
@@ -39,3 +39,11 @@ export interface BookReviewModel {
         total: number;
     };
 }
+
+interface StringKeyValueObject {
+    [key: number]: string;
+}
+export const StatusEnum: StringKeyValueObject = {
+    0: "읽는 중",
+    1: "다 읽음",
+};

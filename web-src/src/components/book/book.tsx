@@ -4,6 +4,8 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
+import { StatusEnum } from "../../utils/constant";
+import Rating from "@mui/material/Rating";
 
 type BookState = {};
 
@@ -15,6 +17,10 @@ interface BookProps {
     image: string;
     onClickHandler: (a1: number) => void;
     cursor: string;
+    startDate: string;
+    finishDate: string | null;
+    status: number;
+    rate: number;
 }
 
 export class Book extends React.Component<BookProps, BookState> {
@@ -23,11 +29,12 @@ export class Book extends React.Component<BookProps, BookState> {
             <Card
                 sx={{
                     display: "flex",
-                    height: 200,
+                    height: 250,
                     width: "800px",
                     fontFamily: "KCC",
                     margin: "1%",
                     marginBottom: "0%",
+                    marginLeft: "0",
                     cursor: this.props.cursor,
                 }}
                 variant="outlined"
@@ -43,11 +50,10 @@ export class Book extends React.Component<BookProps, BookState> {
                 />
                 <Box sx={{ display: "flex", flexDirection: "column" }}>
                     <CardContent sx={{ flex: "1 0 auto" }}>
-                        <Typography component="div" variant="h5">
-                            {"제목: " +
-                                this.props.title
-                                    .replaceAll("<b>", "")
-                                    .replaceAll("</b>", "")}
+                        <Typography variant="h5" display="inline" noWrap>
+                            {this.props.title
+                                .replaceAll("<b>", "")
+                                .replaceAll("</b>", "")}
                         </Typography>
                         <Typography
                             variant="subtitle1"
@@ -67,6 +73,34 @@ export class Book extends React.Component<BookProps, BookState> {
                             {"장르: " +
                                 this.props.category.replace("unknown", " ")}
                         </Typography>
+                    </CardContent>
+                    <CardContent sx={{ flex: "1 0 auto" }}>
+                        <Typography component="div" variant="subtitle1">
+                            {StatusEnum[this.props.status]}
+                        </Typography>
+                        <Typography
+                            variant="subtitle2"
+                            color="text.secondary"
+                            component="div"
+                        >
+                            {"시작 일: " + this.props.startDate.split(" ")[0]}
+                        </Typography>
+                        <Typography
+                            variant="subtitle2"
+                            color="text.secondary"
+                            component="div"
+                        >
+                            {"종료 일: " +
+                                (this.props.finishDate === null
+                                    ? " "
+                                    : this.props.finishDate.split(" ")[0])}
+                        </Typography>
+                        <Rating
+                            name="read-only"
+                            value={this.props.rate / 2}
+                            readOnly
+                            precision={0.5}
+                        />
                     </CardContent>
                 </Box>
             </Card>
