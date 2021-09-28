@@ -12,7 +12,11 @@ import lime from "@material-ui/core/colors/lime";
 import { ThemeProvider } from "@material-ui/styles";
 import { Search } from "./modal/saerch";
 import { ApiAdapter } from "../api/api";
-import { BookInfoModel, SearchedBookModel } from "../utils/constant";
+import {
+    BookInfoModel,
+    SearchedBookModel,
+    PostReviewModel,
+} from "../utils/constant";
 import { Book } from "./book/book";
 import { SelectBook } from "./user/selectBook";
 
@@ -80,6 +84,14 @@ export class Main extends React.Component<MainProps, MainState> {
         return bookList;
     };
 
+    reviewPostHandler = async (reviewInfo: PostReviewModel) => {
+        await ApiAdapter.sendPostReview(
+            this.props.userId,
+            this.props.userToken,
+            reviewInfo
+        );
+    };
+
     addBookHandler = async (book: SearchedBookModel) => {
         ApiAdapter.sendApplyBookRequest(
             this.props.userId,
@@ -129,6 +141,7 @@ export class Main extends React.Component<MainProps, MainState> {
                 return (
                     <Book
                         index={index}
+                        key={aBookInfo.isbn}
                         title={aBookInfo.title}
                         author={aBookInfo.author}
                         category={aBookInfo.category}
@@ -141,6 +154,8 @@ export class Main extends React.Component<MainProps, MainState> {
                         finishDate={aBookInfo.finish_date}
                         status={aBookInfo.status}
                         rate={aBookInfo.rate}
+                        ratingReadOnly={true}
+                        onRatingChangeHandler={(a: number) => {}}
                     ></Book>
                 );
             });
@@ -151,12 +166,14 @@ export class Main extends React.Component<MainProps, MainState> {
                     userToken={this.props.userToken}
                     selectBook={this.state.selectedBook}
                     statusUpdateHandler={this.selectBookStatusUpdate.bind(this)}
+                    ratingUpdateHandler={this.selectBookRateUpdate.bind(this)}
+                    reviewPostHandler={this.reviewPostHandler.bind(this)}
                 />
             );
         }
     };
 
-    selectBookStatusUpdate() {
+    async selectBookStatusUpdate() {
         if (this.state.selectedBook) {
             const selectBook: BookInfoModel = this.state.selectedBook;
             if (selectBook.status === 0) {
@@ -175,7 +192,30 @@ export class Main extends React.Component<MainProps, MainState> {
                     selectBook: selectBook,
                 };
             });
-            ApiAdapter.sendUpdateBookInfo(
+            await ApiAdapter.sendUpdateBookInfo(
+                this.props.userId,
+                this.props.userToken,
+                selectBook.isbn,
+                selectBook.start_date,
+                selectBook.finish_date,
+                selectBook.status,
+                selectBook.rate
+            );
+            this.fetchBookList();
+        }
+    }
+
+    async selectBookRateUpdate(rate: number) {
+        if (this.state.selectedBook) {
+            const selectBook: BookInfoModel = this.state.selectedBook;
+            selectBook.rate = Math.floor(rate);
+            this.setState((prevState) => {
+                return {
+                    ...prevState,
+                    selectBook: selectBook,
+                };
+            });
+            await ApiAdapter.sendUpdateBookInfo(
                 this.props.userId,
                 this.props.userToken,
                 selectBook.isbn,

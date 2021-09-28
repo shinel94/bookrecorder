@@ -1,5 +1,9 @@
 import React from "react";
-import { BookInfoModel, BookReviewModel } from "../../utils/constant";
+import {
+    BookInfoModel,
+    BookReviewModel,
+    PostReviewModel,
+} from "../../utils/constant";
 import { ApiAdapter } from "../../api/api";
 import { Book } from "../book/book";
 import { Divider } from "@mui/material";
@@ -7,9 +11,11 @@ import Container from "@mui/material/Container";
 import { Review } from "../book/review";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import { ReviewModal } from "../modal/reviewModal";
 
 type SelectBookState = {
     reviewList: BookReviewModel[];
+    isReviewModalOpen: boolean;
 };
 
 interface SelectBookProps {
@@ -17,6 +23,8 @@ interface SelectBookProps {
     userToken: string;
     selectBook: BookInfoModel;
     statusUpdateHandler: () => void;
+    ratingUpdateHandler: (rate: number) => void;
+    reviewPostHandler: (arg0: PostReviewModel) => void;
 }
 
 export class SelectBook extends React.Component<
@@ -25,9 +33,27 @@ export class SelectBook extends React.Component<
 > {
     state: SelectBookState = {
         reviewList: [],
+        isReviewModalOpen: false,
     };
 
-    componentDidMount() {
+    openReviewModal = () => {
+        this.setState((prevState) => {
+            return {
+                ...prevState,
+                isReviewModalOpen: true,
+            };
+        });
+    };
+
+    closeReviewModal = () => {
+        this.setState((prevState) => {
+            return {
+                ...prevState,
+                isReviewModalOpen: false,
+            };
+        });
+    };
+    fetchReviewList = () => {
         ApiAdapter.sendGetReview(
             this.props.userId,
             this.props.userToken,
@@ -42,15 +68,18 @@ export class SelectBook extends React.Component<
                 });
             })
             .catch((error) => console.log(error));
+    };
+    componentDidMount() {
+        this.fetchReviewList();
     }
 
     render() {
-        // const review = this.state.reviewList.map((_) => {
-        //     return <Review />;
-        // });
-        const review = [1, 2, 3].map((_) => {
+        const review = this.state.reviewList.map((_) => {
             return <Review />;
         });
+        // const review = [1, 2, 3].map((_) => {
+        //     return <Review />;
+        // });
         return (
             <Container
                 style={{
@@ -64,10 +93,15 @@ export class SelectBook extends React.Component<
                     <Button
                         color="secondary"
                         onClick={this.props.statusUpdateHandler}
+                        size="large"
                     >
-                        {this.props.selectBook.status === 1 ? "재독" : "완독"}
+                        {this.props.selectBook.status === 1
+                            ? "또 읽기"
+                            : "완독"}
                     </Button>
-                    <Button color="secondary">리뷰</Button>
+                    <Button color="secondary" onClick={this.openReviewModal}>
+                        리뷰
+                    </Button>
                 </Box>
 
                 <Book
@@ -82,9 +116,19 @@ export class SelectBook extends React.Component<
                     finishDate={this.props.selectBook.finish_date}
                     status={this.props.selectBook.status}
                     rate={this.props.selectBook.rate}
+                    ratingReadOnly={false}
+                    onRatingChangeHandler={this.props.ratingUpdateHandler}
                 ></Book>
                 <Divider style={{ margin: "5px" }} />
                 {review}
+
+                <ReviewModal
+                    isModalOpen={this.state.isReviewModalOpen}
+                    modalCloseHandler={this.closeReviewModal}
+                    selectBook={this.props.selectBook}
+                    postHandler={this.props.reviewPostHandler}
+                    fetchReviewHandler={this.fetchReviewList.bind(this)}
+                ></ReviewModal>
             </Container>
         );
     }

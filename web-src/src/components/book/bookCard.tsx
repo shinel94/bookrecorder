@@ -15,11 +15,34 @@ interface BookCardProps {
     category: string;
     image: string;
     publisher: string;
-    clickListener: (a1: number) => void;
+    clickListener: ((a1: number) => void) | undefined;
+    buttonText: string;
 }
 
 export class BookCard extends React.Component<BookCardProps, BookCardState> {
     render() {
+        var addButtonComponent = undefined;
+        if (this.props.clickListener) {
+            addButtonComponent = (
+                <Box
+                    sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        pl: 1,
+                        pb: 1,
+                    }}
+                >
+                    <Button
+                        onClick={() => {
+                            this.props.clickListener!(this.props.index);
+                        }}
+                    >
+                        {this.props.buttonText}
+                    </Button>
+                </Box>
+            );
+        }
+
         return (
             <Card
                 sx={{ display: "flex", margin: "1px", height: 200 }}
@@ -46,22 +69,7 @@ export class BookCard extends React.Component<BookCardProps, BookCardState> {
                                 this.props.publisher}
                         </Typography>
                     </CardContent>
-                    <Box
-                        sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            pl: 1,
-                            pb: 1,
-                        }}
-                    >
-                        <Button
-                            onClick={() => {
-                                this.props.clickListener(this.props.index);
-                            }}
-                        >
-                            ADD
-                        </Button>
-                    </Box>
+                    {addButtonComponent}
                 </Box>
                 <CardMedia
                     component="img"

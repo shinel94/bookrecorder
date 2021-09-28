@@ -30,7 +30,7 @@ class Review:
         }
         if file_name is None:
             token = get_date_string()
-            token.replace('-', '').replace(':', '').replace(' ', '')
+            token = token.replace('-', '').replace(':', '').replace(' ', '')
             file_name = f'{token}_{self.nickname}_{self.title}.json'
         save_json(os.path.join(G_DATA_REVIEW_DIR_PATH, file_name), data)
         return file_name

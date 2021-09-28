@@ -4,6 +4,7 @@ import {
     SearchedBookModel,
     G_SERVER_URL,
     BookReviewModel,
+    PostReviewModel,
 } from "../utils/constant";
 
 export class ApiAdapter {
@@ -155,7 +156,7 @@ export class ApiAdapter {
             id: string;
             token: string;
             isbn: string;
-        }>("/api/book/search", { id: a_id, token: a_token, isbn: a_isbn })
+        }>("/api/review/search", { id: a_id, token: a_token, isbn: a_isbn })
             .then((a_response) => {
                 fetch_result.push(...a_response.data.data);
             })
@@ -190,6 +191,37 @@ export class ApiAdapter {
             finish_date: a_finish_date,
             status: a_status,
             rate: a_rate,
+        })
+            .then()
+            .catch((a_error) => {
+                console.log(a_error);
+            });
+    }
+
+    static async sendPostReview(
+        a_id: string,
+        a_token: string,
+        a_review_info: PostReviewModel
+    ): Promise<void> {
+        await this.sendPostRequest<{
+            id: string;
+            token: string;
+            isbn: string;
+            review: string;
+            score: {
+                interest: number;
+                readability: number;
+                quantity: number;
+                total: number;
+            };
+            range: number;
+        }>("/api/review/post", {
+            id: a_id,
+            token: a_token,
+            isbn: a_review_info.isbn,
+            review: a_review_info.review,
+            score: a_review_info.score,
+            range: a_review_info.range,
         })
             .then()
             .catch((a_error) => {

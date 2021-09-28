@@ -47,3 +47,15 @@ export const StatusEnum: StringKeyValueObject = {
     0: "읽는 중",
     1: "다 읽음",
 };
+
+export interface PostReviewModel {
+    isbn: string;
+    review: string;
+    score: {
+        interest: number;
+        readability: number;
+        quantity: number;
+        total: number;
+    };
+    range: number;
+}

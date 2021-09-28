@@ -143,6 +143,7 @@ export class Search extends React.Component<SearchProps, SearchState> {
                                 image={item.image}
                                 publisher={item.publisher}
                                 clickListener={this.clickListener}
+                                buttonText="ADD"
                             ></BookCard>
                         ))}
                     </Paper>

@@ -21,6 +21,8 @@ interface BookProps {
     finishDate: string | null;
     status: number;
     rate: number;
+    onRatingChangeHandler: (rating: number) => void;
+    ratingReadOnly: boolean;
 }
 
 export class Book extends React.Component<BookProps, BookState> {
@@ -96,10 +98,17 @@ export class Book extends React.Component<BookProps, BookState> {
                                     : this.props.finishDate.split(" ")[0])}
                         </Typography>
                         <Rating
-                            name="read-only"
+                            name="rating"
                             value={this.props.rate / 2}
-                            readOnly
+                            readOnly={this.props.ratingReadOnly}
                             precision={0.5}
+                            onChange={(event, newValue) => {
+                                if (newValue) {
+                                    this.props.onRatingChangeHandler(
+                                        newValue * 2
+                                    );
+                                }
+                            }}
                         />
                     </CardContent>
                 </Box>
