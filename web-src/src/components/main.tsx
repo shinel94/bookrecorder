@@ -164,6 +164,7 @@ export class Main extends React.Component<MainProps, MainState> {
                 <SelectBook
                     userId={this.props.userId}
                     userToken={this.props.userToken}
+                    userNickname={this.props.userNickname}
                     selectBook={this.state.selectedBook}
                     statusUpdateHandler={this.selectBookStatusUpdate.bind(this)}
                     ratingUpdateHandler={this.selectBookRateUpdate.bind(this)}

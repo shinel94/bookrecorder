@@ -6,7 +6,11 @@ import Divider from "@mui/material/Divider";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
-import { BookInfoModel, PostReviewModel } from "../../utils/constant";
+import {
+    BookInfoModel,
+    PostReviewModel,
+    QuantityKeyValueMap,
+} from "../../utils/constant";
 import { Rating, TextField } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { green } from "@mui/material/colors";
@@ -24,7 +28,7 @@ const theme = createTheme({
 type ReviewModalState = {
     review: string;
     totalRating: number;
-    quantity: number;
+    quantity: 1 | 2 | 3 | 4 | 5;
     interest: number;
     readability: number;
 };
@@ -207,7 +211,7 @@ export class ReviewModal extends React.Component<
                                         });
                                     }}
                                 >
-                                    많이 짧다
+                                    {QuantityKeyValueMap[1]}
                                 </Button>
                                 <Button
                                     color={
@@ -224,7 +228,7 @@ export class ReviewModal extends React.Component<
                                         });
                                     }}
                                 >
-                                    조금 짧다
+                                    {QuantityKeyValueMap[2]}
                                 </Button>
                                 <Button
                                     color={
@@ -241,7 +245,7 @@ export class ReviewModal extends React.Component<
                                         });
                                     }}
                                 >
-                                    적당했다
+                                    {QuantityKeyValueMap[3]}
                                 </Button>
                                 <Button
                                     color={
@@ -258,7 +262,7 @@ export class ReviewModal extends React.Component<
                                         });
                                     }}
                                 >
-                                    조금 길다
+                                    {QuantityKeyValueMap[4]}
                                 </Button>
                                 <Button
                                     color={
@@ -275,7 +279,7 @@ export class ReviewModal extends React.Component<
                                         });
                                     }}
                                 >
-                                    많이 길다
+                                    {QuantityKeyValueMap[5]}
                                 </Button>
                             </Box>
                         </ThemeProvider>

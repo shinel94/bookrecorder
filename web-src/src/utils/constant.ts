@@ -26,24 +26,29 @@ export interface SearchedBookModel {
     title: string;
 }
 
+interface StringKeyStringValueHashTable {
+    [key: string]: string;
+}
+
+interface NumberKeyStringValueHashTable {
+    [key: number]: string;
+}
+
 export interface BookReviewModel {
     review_index: string;
     user_nickname: string;
     book_title: string;
     review: string;
-    comment: any; // {id1: comment, id2: comment} 인 hash map이 반환
+    comment: StringKeyStringValueHashTable; // {id1: comment, id2: comment} 인 hash map이 반환
     score: {
         interest: number;
         readability: number;
-        quantity: number;
+        quantity: 1 | 2 | 3 | 4 | 5;
         total: number;
     };
 }
 
-interface StringKeyValueObject {
-    [key: number]: string;
-}
-export const StatusEnum: StringKeyValueObject = {
+export const StatusEnum: NumberKeyStringValueHashTable = {
     0: "읽는 중",
     1: "다 읽음",
 };
@@ -54,8 +59,16 @@ export interface PostReviewModel {
     score: {
         interest: number;
         readability: number;
-        quantity: number;
+        quantity: 1 | 2 | 3 | 4 | 5;
         total: number;
     };
     range: number;
 }
+
+export const QuantityKeyValueMap: NumberKeyStringValueHashTable = {
+    1: "많이 짧다",
+    2: "조금 짧다",
+    3: "적당하다",
+    4: "조금 길다",
+    5: "많이 길다",
+};

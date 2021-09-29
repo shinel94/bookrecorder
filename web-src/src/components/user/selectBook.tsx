@@ -12,6 +12,7 @@ import { Review } from "../book/review";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { ReviewModal } from "../modal/reviewModal";
+import Card from "@mui/material/Card";
 
 type SelectBookState = {
     reviewList: BookReviewModel[];
@@ -21,6 +22,7 @@ type SelectBookState = {
 interface SelectBookProps {
     userId: string;
     userToken: string;
+    userNickname: string;
     selectBook: BookInfoModel;
     statusUpdateHandler: () => void;
     ratingUpdateHandler: (rate: number) => void;
@@ -74,8 +76,14 @@ export class SelectBook extends React.Component<
     }
 
     render() {
-        const review = this.state.reviewList.map((_) => {
-            return <Review />;
+        const review = this.state.reviewList.map((aReviewData) => {
+            return (
+                <Review
+                    key={aReviewData.review_index}
+                    ReviewData={aReviewData}
+                    clickUserNickName={this.props.userNickname}
+                />
+            );
         });
         // const review = [1, 2, 3].map((_) => {
         //     return <Review />;
@@ -100,7 +108,7 @@ export class SelectBook extends React.Component<
                             : "완독"}
                     </Button>
                     <Button color="secondary" onClick={this.openReviewModal}>
-                        리뷰
+                        리뷰 남기기
                     </Button>
                 </Box>
 
@@ -120,7 +128,7 @@ export class SelectBook extends React.Component<
                     onRatingChangeHandler={this.props.ratingUpdateHandler}
                 ></Book>
                 <Divider style={{ margin: "5px" }} />
-                {review}
+                <Card style={{ backgroundColor: "#FFFFFF00" }}>{review}</Card>
 
                 <ReviewModal
                     isModalOpen={this.state.isReviewModalOpen}
