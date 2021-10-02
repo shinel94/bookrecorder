@@ -347,7 +347,7 @@ def post_review(a_response:Model.PostReviewModel):
     tags=['BOOK'],
     response_model=Model.ReturnResponseModel
 )
-def delete_review(a_response:Model.PostReviewModel):
+def delete_review(a_response:Model.DeleteReviewModel):
     if not check_token(a_response.id, a_response.token):
         return {
             "success": False,
@@ -413,9 +413,8 @@ def add_review_comment(a_response: Model.AddCommentModel):
             "message": "Error in User Information. Please Log in Again",
             "data": None
         }
-    user = User.select(id=a_response.target_user_id)[0]
-    book = Book.select(isbn=a_response.isbn)[0]
-    review_record = Review.select(user_index=user.index, book_index=book.index)[0]
+
+    review_record = Review.select(index=a_response.review_index)[0]
     review = ReviewVO.load_from_json(review_record.file_path)
     review.comment[a_response.id] = a_response.comment # hash map 이기 때문에, update도 동일한 api로 진행할 수 있다.
 
@@ -440,9 +439,7 @@ def delete_review_comment(a_response: Model.DeleteCommentModel):
             "message": "Error in User Information. Please Log in Again",
             "data": None
         }
-    user = User.select(id=a_response.target_user_id)[0]
-    book = Book.select(isbn=a_response.isbn)[0]
-    review_record = Review.select(user_index=user.index, book_index=book.index)[0]
+    review_record = Review.select(index=a_response.review_index)[0]
     review = ReviewVO.load_from_json(review_record.file_path)
     review.comment.pop(a_response.id)
 

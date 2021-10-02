@@ -134,14 +134,12 @@ class UpdateReviewModel(BaseModel):
 class AddCommentModel(BaseModel):
     id: str
     token: str
-    target_user_id: str
-    isbn: str
+    review_index: str
     comment: str
 
 class DeleteCommentModel(BaseModel):
     id: str
     token: str
-    target_user_id: str
-    isbn: str
+    review_index: str
 
 

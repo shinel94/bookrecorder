@@ -27,6 +27,9 @@ interface SelectBookProps {
     statusUpdateHandler: () => void;
     ratingUpdateHandler: (rate: number) => void;
     reviewPostHandler: (arg0: PostReviewModel) => void;
+    reviewDeleteHandler: (isbn: number) => void;
+    postCommentHandler: (comment: string, review_index: string) => void;
+    deleteCommentHandler: (review_index: string) => void;
 }
 
 export class SelectBook extends React.Component<
@@ -82,12 +85,14 @@ export class SelectBook extends React.Component<
                     key={aReviewData.review_index}
                     ReviewData={aReviewData}
                     clickUserNickName={this.props.userNickname}
+                    deleteReviewHandler={this.props.reviewDeleteHandler}
+                    postCommentHandler={this.props.postCommentHandler}
+                    fetchReviwe={this.fetchReviewList.bind(this)}
+                    clickUserId={this.props.userId}
+                    deleteCommentHandler={this.props.deleteCommentHandler}
                 />
             );
         });
-        // const review = [1, 2, 3].map((_) => {
-        //     return <Review />;
-        // });
         return (
             <Container
                 style={{
@@ -107,7 +112,18 @@ export class SelectBook extends React.Component<
                             ? "또 읽기"
                             : "완독"}
                     </Button>
-                    <Button color="secondary" onClick={this.openReviewModal}>
+                    <Button
+                        color="secondary"
+                        onClick={this.openReviewModal}
+                        disabled={
+                            typeof this.state.reviewList.find((review) => {
+                                return (
+                                    review.user_nickname ===
+                                    this.props.userNickname
+                                );
+                            }) !== "undefined"
+                        }
+                    >
                         리뷰 남기기
                     </Button>
                 </Box>

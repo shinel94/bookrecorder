@@ -3,31 +3,130 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import { BookReviewModel, QuantityKeyValueMap } from "../../utils/constant";
-import { Rating } from "@mui/material";
+import { Rating, TextField } from "@mui/material";
 import { Comment } from "./comment";
 import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
 
 type ReviewState = {
     showReview: boolean;
+    addComment: string;
 };
 
 interface ReviewProps {
+    clickUserId: string;
     clickUserNickName: string;
     ReviewData: BookReviewModel;
+    deleteReviewHandler: (isbn: number) => void;
+    postCommentHandler: (comment: string, review_index: string) => void;
+    fetchReviwe: () => void;
+    deleteCommentHandler: (review_index: string) => void;
 }
 
 export class Review extends React.Component<ReviewProps, ReviewState> {
     state: ReviewState = {
         showReview: false,
+        addComment: "",
     };
+
+    addCommentChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState((prevState) => {
+            return {
+                ...prevState,
+                addComment: event.target.value.substring(0, 30),
+            };
+        });
+    };
+
+    deleteCommentHandler = async () => {
+        await this.props.deleteCommentHandler(
+            this.props.ReviewData.review_index
+        );
+        await this.props.fetchReviwe();
+    };
+
     render() {
-        const sComment = Object.keys({ a: "good", b: "그렇군요" }).map(
+        console.log(
+            Object.keys(this.props.ReviewData.comment).indexOf(
+                this.props.clickUserId
+            )
+        );
+        const sComment = Object.keys(this.props.ReviewData.comment).map(
             (key: string) => {
-                console.log(this.props.ReviewData.comment[key]);
-                return <Comment />;
+                return (
+                    <Comment
+                        key={key}
+                        commentUserId={key}
+                        comment={this.props.ReviewData.comment[key]}
+                        clickUserId={this.props.clickUserId}
+                        deleteCommentHandler={this.deleteCommentHandler.bind(
+                            this
+                        )}
+                    />
+                );
             }
         );
+
+        const sAddComment = (
+            <div>
+                <Divider />
+                <div
+                    style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        width: "100%",
+                        marginTop: "1%",
+                    }}
+                >
+                    <TextField
+                        id="add-comment"
+                        value={this.state.addComment}
+                        onChange={this.addCommentChangeHandler}
+                        style={{ width: "80%" }}
+                        label="Comment"
+                    />
+                    <Button
+                        onClick={async () => {
+                            await this.props.postCommentHandler(
+                                this.state.addComment,
+                                this.props.ReviewData.review_index
+                            );
+                            this.setState((prevState) => {
+                                return {
+                                    ...prevState,
+                                    addComment: "",
+                                };
+                            });
+                            await this.props.fetchReviwe();
+                        }}
+                        disabled={
+                            Object.keys(this.props.ReviewData.comment).indexOf(
+                                this.props.clickUserId
+                            ) !== -1
+                        }
+                    >
+                        Add
+                    </Button>
+                </div>
+            </div>
+        );
+
+        const sDeleteButton =
+            this.props.clickUserNickName ===
+            this.props.ReviewData.user_nickname ? (
+                <Button
+                    onClick={() => {
+                        this.setState((prevState) => {
+                            return {
+                                ...prevState,
+                                showReview: !this.state.showReview,
+                            };
+                        });
+                    }}
+                >
+                    삭제
+                </Button>
+            ) : undefined;
         // const sComment = Object.keys(this.props.ReviewData.comment).map(
         //     (key: string) => {
         //         console.log(this.props.ReviewData.comment[key]);
@@ -46,18 +145,23 @@ export class Review extends React.Component<ReviewProps, ReviewState> {
                         <Typography variant="h5" display="inline" noWrap>
                             {this.props.ReviewData.user_nickname}
                         </Typography>
-                        <Button
-                            onClick={() => {
-                                this.setState((prevState) => {
-                                    return {
-                                        ...prevState,
-                                        showReview: !this.state.showReview,
-                                    };
-                                });
-                            }}
-                        >
-                            {this.state.showReview ? "리뷰 접기" : "리뷰 보기"}
-                        </Button>
+                        <div>
+                            {sDeleteButton}
+                            <Button
+                                onClick={() => {
+                                    this.setState((prevState) => {
+                                        return {
+                                            ...prevState,
+                                            showReview: !this.state.showReview,
+                                        };
+                                    });
+                                }}
+                            >
+                                {this.state.showReview
+                                    ? "댓글 접기"
+                                    : "댓글 보기"}
+                            </Button>
+                        </div>
                     </div>
                     <div>
                         {"총평 : "}
@@ -116,6 +220,7 @@ export class Review extends React.Component<ReviewProps, ReviewState> {
                 <Divider />
                 <div style={{ margin: "1%" }}>
                     {this.state.showReview ? sComment : undefined}
+                    {this.state.showReview ? sAddComment : undefined}
                 </div>
             </Card>
         );

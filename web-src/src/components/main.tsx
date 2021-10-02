@@ -92,6 +92,31 @@ export class Main extends React.Component<MainProps, MainState> {
         );
     };
 
+    reviewDeleteHandler = async (isbn: number) => {
+        await ApiAdapter.sendDeleteReview(
+            this.props.userId,
+            this.props.userToken,
+            isbn
+        );
+    };
+
+    postCommentHandler = async (comment: string, review_index: string) => {
+        await ApiAdapter.sendPostComment(
+            this.props.userId,
+            this.props.userToken,
+            review_index,
+            comment
+        );
+    };
+
+    deleteCommentHandler = async (review_index: string) => {
+        await ApiAdapter.sendDeleteComment(
+            this.props.userId,
+            this.props.userToken,
+            review_index
+        );
+    };
+
     addBookHandler = async (book: SearchedBookModel) => {
         ApiAdapter.sendApplyBookRequest(
             this.props.userId,
@@ -169,6 +194,9 @@ export class Main extends React.Component<MainProps, MainState> {
                     statusUpdateHandler={this.selectBookStatusUpdate.bind(this)}
                     ratingUpdateHandler={this.selectBookRateUpdate.bind(this)}
                     reviewPostHandler={this.reviewPostHandler.bind(this)}
+                    reviewDeleteHandler={this.reviewDeleteHandler.bind(this)}
+                    postCommentHandler={this.postCommentHandler.bind(this)}
+                    deleteCommentHandler={this.deleteCommentHandler.bind(this)}
                 />
             );
         }

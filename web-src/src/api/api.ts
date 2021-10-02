@@ -228,4 +228,65 @@ export class ApiAdapter {
                 console.log(a_error);
             });
     }
+
+    static async sendDeleteReview(
+        a_id: string,
+        a_token: string,
+        a_isbn: number
+    ): Promise<void> {
+        await this.sendPostRequest<{
+            id: string;
+            token: string;
+            isbn: number;
+        }>("/api/review/post", {
+            id: a_id,
+            token: a_token,
+            isbn: a_isbn,
+        })
+            .then()
+            .catch((a_error) => {
+                console.log(a_error);
+            });
+    }
+    static async sendPostComment(
+        a_id: string,
+        a_token: string,
+        a_review_index: string,
+        a_comment: string
+    ): Promise<void> {
+        await this.sendPostRequest<{
+            id: string;
+            token: string;
+            review_index: string;
+            comment: string;
+        }>("/api/review/comment", {
+            id: a_id,
+            token: a_token,
+            review_index: a_review_index,
+            comment: a_comment,
+        })
+            .then()
+            .catch((a_error) => {
+                console.log(a_error);
+            });
+    }
+    static async sendDeleteComment(
+        a_id: string,
+        a_token: string,
+        a_review_index: string
+    ): Promise<void> {
+        await this.sendPostRequest<{
+            id: string;
+            token: string;
+            review_index: string;
+        }>("/api/review/comment/delete", {
+            id: a_id,
+            token: a_token,
+            review_index: a_review_index,
+        })
+            .then()
+            .catch((a_error) => {
+                console.log(a_error);
+            });
+    }
 }
